@@ -1,17 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { X } from "lucide-react";
-import type React from "react";
+import { Outlet } from "react-router";
 
-export default function ChatLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ChatLayout() {
   return (
     <div className="flex h-screen bg-background">
       {/* Sidebar */}
-      <div className="w-64 border-r bg-muted/10">
+      <aside className="w-64 border-r bg-muted/10">
         <div className="p-4 border-b">
           <div className="flex items-center gap-2">
             <div className="h-6 w-6 rounded-full bg-primary" />
@@ -72,7 +68,7 @@ export default function ChatLayout({
             </div>
           </div>
         </ScrollArea>
-      </div>
+      </aside>
 
       {/* Main Content */}
       <div className="flex-1 flex">
@@ -89,7 +85,7 @@ export default function ChatLayout({
               </Button>
             </div>
           </header>
-          {children}
+          <Outlet />
         </div>
 
         {/* Right Panel - Contact Details */}
