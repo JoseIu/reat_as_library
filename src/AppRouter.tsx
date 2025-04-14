@@ -28,7 +28,7 @@ export const AppRouter = () => {
           }
         >
           <Route index element={<NoChatSelectedPage />} />
-          <Route path=":chatId" element={<ChatPage />} />
+          <Route path="/chat/:clientId" element={<ChatPage />} />
         </Route>
 
         <Route path="/" element={<Navigate to="/auth" />} />
