@@ -2,9 +2,10 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getClients } from "@/db/fakeData";
 import { useQuery } from "@tanstack/react-query";
-import { NavLink } from "react-router";
+import { NavLink, useParams } from "react-router";
 
 export const ContactList = () => {
+  const { clientId } = useParams();
   const { data: clients, isLoading } = useQuery({
     queryKey: ["clients"],
     queryFn: () => getClients(),
@@ -21,11 +22,11 @@ export const ContactList = () => {
                 <div className="w-full flex items-center gap-1">
                   <div className="rounded-full bg-gray-200 animate-pulse w-6 h-6"></div>
                   <div className="rounded-md w-full bg-gray-200 animate-pulse  h-6"></div>
-                </div>{" "}
+                </div>
                 <div className="w-full flex items-center gap-1">
                   <div className="rounded-full bg-gray-200 animate-pulse w-6 h-6"></div>
                   <div className="rounded-md w-full bg-gray-200 animate-pulse  h-6"></div>
-                </div>{" "}
+                </div>
                 <div className="w-full flex items-center gap-1">
                   <div className="rounded-full bg-gray-200 animate-pulse w-6 h-6"></div>
                   <div className="rounded-md w-full bg-gray-200 animate-pulse  h-6"></div>
@@ -42,7 +43,13 @@ export const ContactList = () => {
                 }
                 key={client.id}
               >
-                <div className="h-6 w-6 rounded-full bg-gray-300 mr-2 flex-shrink-0 flex items-center justify-center text-white text-xs">
+                <div
+                  className={`h-6 w-6 rounded-full bg-gray-300 mr-2 flex-shrink-0 flex items-center justify-center  text-xs ${
+                    client.id === clientId
+                      ? "text-black bg-white"
+                      : "text-white"
+                  }`}
+                >
                   {client.name.charAt(0)}
                 </div>
                 {client.name}
