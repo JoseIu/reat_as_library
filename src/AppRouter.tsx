@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
+import { PrivateRoute } from "./auth/components/PrivateRoute";
 import AuthLayout from "./auth/layout/AuthLayout";
 import { LoginPage } from "./auth/pages/LoginPage";
 import { RegisterPage } from "./auth/pages/RegisterPage";
@@ -23,7 +24,9 @@ export const AppRouter = () => {
           path="/chat"
           element={
             <Suspense fallback={<div>Loading...</div>}>
-              <ChatLayout />
+              <PrivateRoute isAuthenticated={true}>
+                <ChatLayout />
+              </PrivateRoute>
             </Suspense>
           }
         >
