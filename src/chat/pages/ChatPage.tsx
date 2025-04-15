@@ -1,53 +1,55 @@
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
+import { getClient, getClientMessages } from "@/db/fakeData";
+import { useQuery } from "@tanstack/react-query";
 import { Copy, Download, Send, ThumbsDown, ThumbsUp } from "lucide-react";
 import { useState } from "react";
 import { useParams } from "react-router";
 
-interface Message {
-  role: "agent" | "user";
-  content: string;
-  timestamp: string;
-}
-
 export default function ChatPage() {
   const { clientId } = useParams();
   const [input, setInput] = useState("");
-  const [messages] = useState<Message[]>([
-    {
-      role: "agent",
-      content: "Hello, I am a generative AI agent. How may I assist you today?",
-      timestamp: "4:08:28 PM",
-    },
-    {
-      role: "user",
-      content: "Hi, I'd like to check my bill.",
-      timestamp: "4:08:37 PM",
-    },
-    {
-      role: "agent",
-      content:
-        "Please hold for a second.\n\nOk, I can help you with that\n\nI'm pulling up your current bill information\n\nYour current bill is $150, and it is due on August 31, 2024.\n\nIf you need more details, feel free to ask!",
-      timestamp: "4:08:37 PM",
-    },
-  ]);
 
+  const { data: messages = [], isLoading } = useQuery({
+    queryKey: ["messages", clientId],
+    queryFn: () => getClientMessages(clientId ?? ""),
+    enabled: !!clientId,
+  });
+
+  const { data: client } = useQuery({
+    queryKey: ["client", clientId],
+    queryFn: () => getClient(clientId ?? ""),
+    enabled: !!clientId,
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (!messages.length) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center p-4 md:text-2xl font-bold ">
+        No messages yet. Start a conversation with a customer.
+      </div>
+    );
+  }
   return (
     <div className="flex-1 flex flex-col">
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
           {messages.map((message, index) => (
             <div key={index} className="w-full">
-              {message.role === "agent" ? (
+              {message.sender === "agent" ? (
                 // Agent message - left aligned
                 <div className="flex gap-2 max-w-[80%]">
-                  <div className="h-8 w-8 rounded-full bg-primary flex-shrink-0" />
+                  <div className="h-8 w-8 rounded-full bg-primary flex-shrink-0 text-white flex items-center justify-center">
+                    {client?.name.charAt(0)}
+                  </div>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium">NexTalk</span>
                       <span className="text-sm text-muted-foreground">
-                        {message.timestamp}
+                        {message.createdAt.toLocaleTimeString()}
                       </span>
                     </div>
                     <div className="p-3 bg-muted/50 rounded-lg">
@@ -77,7 +79,7 @@ export default function ChatPage() {
                   <div className="text-right mb-1">
                     <span className="text-sm font-medium mr-2">G5</span>
                     <span className="text-sm text-muted-foreground">
-                      {message.timestamp}
+                      {message.createdAt.toLocaleTimeString()}
                     </span>
                   </div>
                   <div className="bg-black text-white p-3 rounded-lg max-w-[80%]">
